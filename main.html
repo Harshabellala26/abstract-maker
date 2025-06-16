@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abstract Maker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #dae958, #ec4646);
+            font-family: 'Times New Roman', serif;
+            margin: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .container {
+            width: 45%;
+        }
+        .preview {
+            width: 50%;
+            padding: 20px;
+            background: white;
+            border: 3px solid #000;
+            border-radius: 10px;
+        }
+        .title {
+            font-size: 16px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .abstract-label {
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .abstract-content {
+            font-size: 12px;
+            max-width: 100%;
+            margin: auto;
+            line-height: 1.5;
+            overflow: hidden;
+            text-align: left;
+            white-space: pre-line;
+        }
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+        .left, .right {
+            font-size: 14px;
+            text-align: left;
+        }
+        .guide, .team {
+            font-size: 12px;
+            margin-top: 5px;
+            white-space: pre-line;
+        }
+        form {
+            margin-bottom: 60px;
+        }
+        #abstract {
+        width: 90%; /* Adjust width as needed */
+        max-width: 600px; /* Prevents it from becoming too wide */
+        height: 150px; /* Increases height */
+        min-height: 130px; /* Ensures it doesn't shrink */
+        }
+        #guide{
+        width: 90%; /* Adjust width as needed */
+        max-width: 600px; /* Prevents it from becoming too wide */
+        height: 50px; /* Increases height */
+        min-height: 50px; /* Ensures it doesn't shrink */
+        }
+        #team{
+        width: 90%; /* Adjust width as needed */
+        max-width: 600px; /* Prevents it from becoming too wide */
+        height: 50px; /* Increases height */
+        min-height: 50px; /* Ensures it doesn't shrink */
+        }
+        textarea, input {
+            width: 100%; /* Adjust this value as needed */
+            max-width: 400px; 
+        }
+        input::placeholder, textarea::placeholder {
+        color: white;
+        opacity: 0.7; /* Adjust opacity for better visibility */
+        }
+
+        .download-btn {
+            margin-top: 120px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+        .credits {
+        text-align: center;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        /* font-weight: bold; */
+        padding: 10px;
+        background-color: #f1f1f1;
+        border-top: 2px solid #000;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        }
+    </style>
+    <script>
+        function updateAbstract() {
+            document.getElementById('displayTitle').innerText = document.getElementById('title').value;
+            document.getElementById('displayAbstract').innerText = document.getElementById('abstract').value;
+            document.getElementById('displayGuide').innerText = document.getElementById('guide').value;
+            document.getElementById('displayTeam').innerText = document.getElementById('team').value;
+        }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll("input, textarea").forEach(element => {
+                element.addEventListener("input", updateAbstract);
+            });
+        });
+        
+        function downloadPDF() {
+            const jsPDF = window.jspdf.jsPDF;
+            const doc = new jsPDF();
+            
+            doc.setFont('times');
+            doc.setFontSize(16);
+            doc.text(document.getElementById('displayTitle').innerText, 105, 20, { align: 'center' });
+            
+            doc.setFontSize(14);
+            doc.text("Abstract:", 15, 40);
+            
+            doc.setFontSize(12);
+doc.text(document.getElementById('displayAbstract').innerText, 15, 50, { maxWidth: 180 });
+
+let yPosition = 50 + (doc.getTextDimensions(document.getElementById('displayAbstract').innerText, { maxWidth: 180 }).h) + 36; // Add 3 lines of space
+            
+            doc.setFontSize(14);
+doc.text("Internal Guide:", 15, yPosition);
+            doc.setFontSize(12);
+doc.text(document.getElementById('displayGuide').innerText, 15, yPosition + 5);
+            
+            doc.setFontSize(14);
+doc.text("Team Members:", 120, yPosition);
+            doc.setFontSize(12);
+doc.text(document.getElementById('displayTeam').innerText, 120, yPosition + 5);
+            
+            let titleText = document.getElementById('displayTitle').innerText.trim().split(" ").slice(0, 4).join("_");
+titleText = titleText || "Abstract"; // Default name if title is empty
+doc.save(`${titleText}.pdf`);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <form>
+            <label>Title:</label>
+            <input type="text" id="title" required><br><br>
+            
+            <label>Abstract:</label>
+            <textarea id="abstract" required></textarea><br><br>
+            
+            <label>Internal Guide:</label>
+            <textarea id="guide" rows="3" required></textarea><br><br>
+            
+            <label>Team Members:</label>
+            <textarea id="team" rows="4" required></textarea><br><br>
+        </form>
+    </div>
+    
+    <div class="preview">
+        <div class="title" id="displayTitle">Your Abstract Title Here</div>
+        <div class="abstract-label">Abstract:</div>
+        <div class="abstract-content" id="displayAbstract">Your abstract content goes here.</div>
+        <div class="footer">
+            <div class="left">
+                <div>Internal Guide:</div>
+                <div class="guide" id="displayGuide">Guide Name Here</div>
+            </div>
+            <div class="right">
+                <div>Team Members:</div>
+                <div class="team" id="displayTeam">Member 1, Member 2, Member 3</div>
+            </div>
+        </div>
+        <button class="download-btn" onclick="downloadPDF()">Download as PDF</button>
+    </div>
+<footer>
+    <p class="credits">Created by <b>Harsha bellala</b></p>
+</footer>
+</body>
+</html>
